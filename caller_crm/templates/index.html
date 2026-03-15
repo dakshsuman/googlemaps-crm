@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cold Caller CRM</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.10.5/font/bootstrap-icons.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="glass-bg"></div>
+    
+    <div class="app-container vertical">
+        
+        <!-- Top Navigation Bar -->
+        <header class="top-nav glass-panel">
+            <div class="logo-area">
+                <h2><i class="bi bi-headset"></i> DialCRM</h2>
+            </div>
+            
+            <div class="filter-tabs">
+                <button class="filter-btn active" data-filter="Pending">Pending</button>
+                <button class="filter-btn" data-filter="In Progress">In Progress</button>
+                <button class="filter-btn" data-filter="Accepted">Accepted</button>
+                <button class="filter-btn" data-filter="Rejected">Rejected</button>
+                <button class="filter-btn" data-filter="Call Back">Call Back</button>
+                <button class="filter-btn" data-filter="No Answer">No Answer</button>
+            </div>
+
+            <div class="top-right">
+                <div class="search-box">
+                    <i class="bi bi-search"></i>
+                    <input type="text" id="searchInput" placeholder="Search leads...">
+                </div>
+                <div class="stats-overview">
+                    <span id="stat-total" class="badge secondary">0 Total</span>
+                    <span id="stat-pending" class="badge primary">0 Pending</span>
+                </div>
+            </div>
+        </header>
+
+        <!-- Compact Lead Detail View (Appears on top when a row is clicked) -->
+        <div id="lead-details" class="lead-view glass-panel compact hidden">
+            <div class="compact-info">
+                <div class="lead-header-row">
+                    <span id="l-category" class="lead-category">Category</span>
+                    <span id="l-status-badge" class="badge status-pending badge-sm">Pending</span>
+                </div>
+                <h2 id="l-name">Business Name</h2>
+                <div class="lead-meta">
+                    <span class="stars"><i class="bi bi-star-fill text-warning"></i> <span id="l-rating">0.0</span> (<span id="l-reviews">0</span>)</span>
+                    <a href="#" id="l-phone" class="meta-link"><i class="bi bi-telephone text-accent"></i> <span id="l-phone-text">N/A</span></a>
+                    <a href="#" id="l-website" target="_blank" class="meta-link"><i class="bi bi-globe text-accent"></i> Website</a>
+                    <span class="meta-address"><i class="bi bi-geo-alt text-accent"></i> <span id="l-address">N/A</span></span>
+                </div>
+            </div>
+
+            <div class="compact-actions">
+                <div class="action-buttons">
+                    <button class="btn-action act-accept" onclick="updateStatus('Accepted')" title="Accept"><i class="bi bi-check-lg"></i></button>
+                    <button class="btn-action act-reject" onclick="updateStatus('Rejected')" title="Reject"><i class="bi bi-x-lg"></i></button>
+                    <button class="btn-action act-callback" onclick="updateStatus('Call Back')" title="Call Back"><i class="bi bi-arrow-repeat"></i></button>
+                    <button class="btn-action act-noanswer" onclick="updateStatus('No Answer')" title="No Answer"><i class="bi bi-voicemail"></i></button>
+                    <button class="btn-action act-pending" onclick="updateStatus('Pending')" title="Reset to Pending"><i class="bi bi-arrow-counterclockwise"></i></button>
+                </div>
+                <div class="notes-section">
+                    <input type="text" id="lead-notes" placeholder="Meeting Notes / Remarks..." />
+                    <button class="btn-save btn-primary" onclick="saveNotes()">Save</button>
+                </div>
+            </div>
+
+            <button class="btn-close-lead" onclick="closeLead()"><i class="bi bi-x"></i></button>
+        </div>
+
+        <!-- Data Table Content -->
+        <main class="table-container glass-panel">
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th style="width: 130px;">
+                            <div class="th-content sortable" onclick="sortTable('status')">Status <i class="bi bi-arrow-down-up"></i></div>
+                            <input type="text" class="col-filter" data-col="status" placeholder="Filter...">
+                        </th>
+                        <th>
+                            <div class="th-content sortable" onclick="sortTable('name')">Name <i class="bi bi-arrow-down-up"></i></div>
+                            <input type="text" class="col-filter" data-col="name" placeholder="Filter...">
+                        </th>
+                        <th>
+                            <div class="th-content sortable" onclick="sortTable('phone')">Phone <i class="bi bi-arrow-down-up"></i></div>
+                            <input type="text" class="col-filter" data-col="phone" placeholder="Filter...">
+                        </th>
+                        <th>
+                            <div class="th-content sortable" onclick="sortTable('website')">Website <i class="bi bi-arrow-down-up"></i></div>
+                            <input type="text" class="col-filter" data-col="website" placeholder="Filter...">
+                        </th>
+                        <th>
+                            <div class="th-content sortable" onclick="sortTable('category')">Category <i class="bi bi-arrow-down-up"></i></div>
+                            <input type="text" class="col-filter" data-col="category" placeholder="Filter...">
+                        </th>
+                        <th>
+                            <div class="th-content sortable" onclick="sortTable('rating')">Rating <i class="bi bi-arrow-down-up"></i></div>
+                            <input type="text" class="col-filter" data-col="rating" placeholder="Filter...">
+                        </th>
+                        <th style="width: 100px;">
+                            <div class="th-content sortable" onclick="sortTable('reviews')">Reviews <i class="bi bi-arrow-down-up"></i></div>
+                            <input type="text" class="col-filter" data-col="reviews" placeholder="Filter...">
+                        </th>
+                        <th>
+                            <div class="th-content sortable" onclick="sortTable('address')">Address <i class="bi bi-arrow-down-up"></i></div>
+                            <input type="text" class="col-filter" data-col="address" placeholder="Filter...">
+                        </th>
+                    </tr>
+                </thead>
+                <tbody id="leadsTableBody">
+                    <!-- Dynamic Leads will populate here -->
+                </tbody>
+            </table>
+        </main>
+    </div>
+
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+</html>

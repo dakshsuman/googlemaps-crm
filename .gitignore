@@ -1,1 +1,33 @@
-.history/
+# Environments
+.env
+.venv
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Credentials
+*.json
+!package.json
+!package-lock.json
+
+# Exports
+exports/
+*.csv
+
+# SQLite DB
+*.db
+*.sqlite3
+
+# Windows
+Thumbs.db
+Desktop.ini
+
+# App
+caller_crm/instance/
