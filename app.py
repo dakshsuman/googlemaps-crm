@@ -30,6 +30,14 @@ def ensure_columns(worksheet):
     if not headers:
         return headers
         
+    # Check if we need to add columns to the grid itself
+    needed_cols = 0
+    if "CRM_Status" not in headers: needed_cols += 1
+    if "CRM_Notes" not in headers: needed_cols += 1
+    
+    if needed_cols > 0 and worksheet.col_count < len(headers) + needed_cols:
+        worksheet.add_cols(len(headers) + needed_cols - worksheet.col_count)
+        
     # Ensure Status column exists
     if "CRM_Status" not in headers:
         headers.append("CRM_Status")
