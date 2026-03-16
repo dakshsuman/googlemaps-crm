@@ -72,12 +72,20 @@ def get_all_leads():
                 # Extract fields expected by CRM frontend
                 category_val = row_dict.get('main_category', row_dict.get('categories', row_dict.get('category', 'Unknown')))
                 
-                # Handle missing rating/reviews
+                # Handle missig rating/reviews
                 try: rating = float(row_dict.get('rating', 0.0) or 0.0)
                 except: rating = 0.0
                 
                 try: reviews = int(row_dict.get('reviews', 0) or 0)
                 except: reviews = 0
+                
+                address_str = row_dict.get('address', '')
+                state_val = 'Unknown'
+                if address_str:
+                    import re
+                    match = re.search(r'([A-Za-z\s]+)(?:,\s*)?\d{5,6}', address_str)
+                    if match:
+                        state_val = match.group(1).split(',')[-1].strip()
                 
                 lead = {
                     'id': row_num,  # we use Google Sheet row number as the ID!
@@ -87,7 +95,8 @@ def get_all_leads():
                     'website': row_dict.get('website', ''),
                     'rating': rating,
                     'reviews': reviews,
-                    'address': row_dict.get('address', ''),
+                    'address': address_str,
+                    'state': state_val,
                     'category': category_val,
                     'status': row_dict.get('CRM_Status', '') or 'Pending',
                     'notes': row_dict.get('CRM_Notes', '')

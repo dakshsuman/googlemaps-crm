@@ -129,7 +129,7 @@ function renderLeadsTable() {
     });
 
     if (displayLeads.length === 0) {
-        tableBody.innerHTML = `<tr><td colspan="8" class="empty-table">No leads found.</td></tr>`;
+        tableBody.innerHTML = `<tr><td colspan="9" class="empty-table">No leads found.</td></tr>`;
         return;
     }
 
@@ -148,6 +148,7 @@ function renderLeadsTable() {
             <td class="td-category" title="${lead.category || 'N/A'}">${lead.category || 'N/A'}</td>
             <td><i class="bi bi-star-fill text-warning"></i> ${lead.rating || 'N/A'}</td>
             <td>${lead.reviews || '0'}</td>
+            <td class="td-state" title="${lead.state || 'Unknown'}">${lead.state || 'Unknown'}</td>
             <td class="td-address" title="${lead.address || 'N/A'}">${lead.address || 'N/A'}</td>
         `;
 
